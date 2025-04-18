@@ -1,0 +1,238 @@
+/* ===== Global Variables ===== */
+:root {
+    --background: #f7fafc;
+    --text: #2d3748;
+    --header-bg: #2d3748;
+    --header-text: #fff;
+    --footer-bg: #2d3748;
+    --footer-text: #fff;
+    --offer-bg: linear-gradient(135deg, #ff4757, #ff6b81);
+    --button-bg: #2ed573;
+    --button-hover: #25a55f;
+    --navbar-bg: #fff;
+    --navbar-text: #2d3748;
+    --search-bg: #fff;
+    --search-text: #2d3748;
+    --search-border: #ddd;
+  }
+  
+  /* ===== Dark Mode Variables ===== */
+  .dark {
+    --background: #1a202c;
+    --text: #e2e8f0;
+    --header-bg: #1a202c;
+    --header-text: #e2e8f0;
+    --footer-bg: #1a202c;
+    --footer-text: #e2e8f0;
+    --offer-bg: linear-gradient(135deg, #ff6b81, #ff4757);
+    --button-bg: #25a55f;
+    --button-hover: #2ed573;
+    --navbar-bg: #1a202c;
+    --navbar-text: #e2e8f0;
+    --search-bg: #2d3748;
+    --search-text: #e2e8f0;
+    --search-border: #4a5568;
+  }
+  
+  /* ===== Global Reset ===== */
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    color: var(--text);
+    background-color: var(--background);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  ul {
+    list-style: none;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* ===== Header & NavBar ===== */
+  header {
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    background-color: var(--navbar-bg);
+    color: var(--navbar-text);
+  }
+  
+  nav ul {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  nav a {
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  nav a:hover {
+    color: var(--button-bg);
+  }
+  
+  /* ===== Theme Toggle Button ===== */
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--search-border);
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .theme-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ===== Search Bar ===== */
+  .form-control {
+    background-color: var(--search-bg);
+    color: var(--search-text);
+    border-color: var(--search-border);
+  }
+  
+  .btn-outline-success {
+    border-color: var(--button-bg);
+    color: var(--button-bg);
+  }
+  
+  .btn-outline-success:hover {
+    background-color: var(--button-bg);
+    color: #fff;
+  }
+  
+  /* ===== Main Content ===== */
+  main {
+    padding-top: 80px; /* Adjust this value based on the height of your NavBar */
+  }
+  
+  /* ===== Footer ===== */
+  .footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 40px 20px;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .footer-section {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .footer-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .footer-section ul li {
+    margin-bottom: 10px;
+  }
+  
+  .footer-section ul li a {
+    color: var(--footer-text);
+    text-decoration: none;
+  }
+  
+  .footer-section ul li a:hover {
+    text-decoration: underline;
+  }
+  
+  .footer-section p {
+    margin: 5px 0;
+  }
+  
+  .social-links a {
+    color: var(--footer-text);
+    text-decoration: none;
+    margin: 0 10px;
+  }
+  
+  .social-links a:hover {
+    text-decoration: underline;
+  }
+  
+  .newsletter-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .newsletter-form input {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 200px;
+    background-color: var(--search-bg);
+    color: var(--search-text);
+  }
+  
+  .newsletter-form button {
+    padding: 10px 20px;
+    background-color: var(--button-bg);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .newsletter-form button:hover {
+    background-color: var(--button-hover);
+  }
+  
+  .footer-bottom {
+    margin-top: 20px;
+    border-top: 1px solid #444;
+    padding-top: 20px;
+  }

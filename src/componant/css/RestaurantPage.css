@@ -1,0 +1,149 @@
+/* RestaurantPage.css */
+
+.restaurant-page {
+    padding: 50px 20px 20px; /* Increased top padding */
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .restaurant-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .restaurant-logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .online-status {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .online-status button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .online-status button.online {
+    background-color: #28a745; /* Green for online */
+    color: #fff;
+  }
+  
+  .online-status button.offline {
+    background-color: #dc3545; /* Red for offline */
+    color: #fff;
+  }
+  
+  .add-item-form {
+    margin-bottom: 20px;
+  }
+  
+  .add-item-form input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .add-item-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .add-item-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  .search-menu {
+    margin-bottom: 20px;
+  }
+  
+  .search-menu input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .menu-list, .orders-list, .notifications {
+    margin-bottom: 20px;
+  }
+  
+  .menu-list ul, .orders-list ul, .notifications ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu-list li, .orders-list li, .notifications li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .menu-item-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    margin-right: 10px;
+  }
+  
+  .order-filters {
+    margin-bottom: 20px;
+  }
+  
+  .order-filters button {
+    padding: 10px 20px;
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .order-filters button:hover {
+    background-color: #5a6268;
+  }
+  
+  .export-orders, .simulate-order, .call-admin {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .export-orders button, .simulate-order button, .call-admin button {
+    padding: 10px 20px;
+    background-color: #ffc107;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .export-orders button:hover, .simulate-order button:hover, .call-admin button:hover {
+    background-color: #e0a800;
+  }

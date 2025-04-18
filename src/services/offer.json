@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Exclusive 50% Off on Your First Order!",
+    "description": "Get 50% off your first order with us. Enjoy delicious food with great savings. Limited time offer!",
+    "ctaText": "Claim Your Discount",
+    "ctaLink": "https://cdn.gintaa.com/food-listings/category/biryani.png",
+    "isActive": true,
+    "discountPercentage": 50,
+    "colors": {
+      "primary": "#ff4757",
+      "secondary": "#ff6b81",
+      "accent": "#2ed573"
+    },
+    "marqueeText": "Hurry up! Offer ends soon!"
+  },
+  {
+    "title": "Free Delivery on Orders Above $50!",
+    "description": "Order now and get free delivery on orders above $50. Don't miss out on this amazing deal!",
+    "ctaText": "Order Now",
+    "ctaLink": "https://cdn.gintaa.com/food-listings/category/momo.png",
+    "isActive": true,
+    "discountPercentage": null,
+    "colors": {
+      "primary": "#2e86de",
+      "secondary": "#54a0ff",
+      "accent": "#ff9f43"
+    },
+    "marqueeText": "Limited time offer! Free delivery on orders above $50."
+  },
+  {
+    "title": "Buy 1 Get 1 Free!",
+    "description": "Buy one item and get another one absolutely free. Hurry, this offer won't last long!",
+    "ctaText": "Shop Now",
+    "ctaLink": "https://cdn.gintaa.com/food-listings/category/sothindian.png",
+    "isActive": true,
+    "discountPercentage": 100,
+    "colors": {
+      "primary": "#10ac84",
+      "secondary": "#1dd1a1",
+      "accent": "#ff6b6b"
+    },
+    "marqueeText": "Buy 1 Get 1 Free! Limited stock available."
+  }
+]

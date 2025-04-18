@@ -1,0 +1,185 @@
+/* ProfileDashboard.css */
+
+/* Container for the profile dashboard */
+.profile-dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--background); /* Use CSS variable for background */
+  padding: 20px;
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+/* Profile card styling */
+.profile-dashboard-card {
+  background: var(--navbar-bg); /* Use CSS variable for card background */
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow for depth */
+  max-width: 500px;
+  width: 100%;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+/* Title styling */
+.profile-dashboard-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: var(--text); /* Use CSS variable for text color */
+  animation: slideInDown 0.5s ease-in-out; /* Slide-in animation */
+}
+
+/* Error message styling */
+.profile-dashboard-error {
+  background-color: #ffebee; /* Light red background */
+  color: #c62828; /* Dark red text */
+  padding: 0.75rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out; /* Fade-in animation */
+}
+
+/* Success message styling */
+.profile-dashboard-success {
+  background-color: #e8f5e9; /* Light green background */
+  color: #2e7d32; /* Dark green text */
+  padding: 0.75rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out; /* Fade-in animation */
+}
+
+/* Profile content styling */
+.profile-dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideInUp 0.5s ease-in-out; /* Slide-in animation */
+}
+
+/* Profile field styling */
+.profile-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--search-border); /* Use CSS variable for border color */
+  transition: border-color 0.3s ease; /* Smooth border transition */
+}
+
+.profile-field label {
+  font-weight: 500;
+  color: var(--text); /* Use CSS variable for text color */
+}
+
+.profile-field span {
+  color: var(--text); /* Use CSS variable for text color */
+}
+
+/* Profile picture section */
+.profile-picture-section {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--button-bg); /* Use CSS variable for border color */
+  transition: border-color 0.3s ease; /* Smooth border transition */
+}
+
+/* Profile actions styling */
+.profile-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  animation: fadeIn 0.5s ease-in-out; /* Fade-in animation */
+}
+
+.profile-edit-button,
+.profile-save-button,
+.profile-cancel-button,
+.profile-logout-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+.profile-edit-button {
+  background-color: var(--button-bg); /* Use CSS variable for button background */
+  color: white;
+}
+
+.profile-save-button {
+  background-color: #28a745; /* Green background */
+  color: white;
+}
+
+.profile-cancel-button {
+  background-color: #dc3545; /* Red background */
+  color: white;
+}
+
+.profile-logout-button {
+  background-color: #6c757d; /* Gray background */
+  color: white;
+}
+
+/* Hover effects for buttons */
+.profile-edit-button:hover,
+.profile-save-button:hover,
+.profile-cancel-button:hover,
+.profile-logout-button:hover {
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.profile-edit-button:active,
+.profile-save-button:active,
+.profile-cancel-button:active,
+.profile-logout-button:active {
+  transform: translateY(0); /* Reset lift on click */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
