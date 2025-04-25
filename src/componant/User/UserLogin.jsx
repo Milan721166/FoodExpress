@@ -245,120 +245,215 @@
 
 
 
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // ✅ Auth context
-import { UserContext } from "../../context/UserContext"; // ✅ User context
+  // import React, { useState, useContext } from "react";
+  // import { useNavigate } from "react-router-dom";
+  // import { useAuth } from "../../context/AuthContext"; // ✅ Auth context
+  // import { UserContext } from "../../context/UserContext"; // ✅ User context
 
-import "../css/UserLogin.css";
+  // import "../css/UserLogin.css";
 
-function UserLogin({ theme, toggleTheme }) {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  // function UserLogin({ theme, toggleTheme }) {
+  //   const navigate = useNavigate();
+  //   const [email, setEmail] = useState("");
+  //   const [password, setPassword] = useState("");
+  //   const [error, setError] = useState("");
+  //   const [success, setSuccess] = useState(false);
 
-  const { setUser } = useContext(UserContext);
-  const { login } = useAuth(); // ✅ Access auth login function
+  //   const { setUser } = useContext(UserContext);
+  //   const { login } = useAuth(); // ✅ Access auth login function
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  //   const handleSubmit = async (e) => {
+  //     e.preventDefault();
 
-    if (!email || !password) {
-      setError("Please fill in all fields.");
-      return;
-    }
+  //     if (!email || !password) {
+  //       setError("Please fill in all fields.");
+  //       return;
+  //     }
 
-    try {
-      const response = await fetch("http://localhost:8081/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  //     try {
+  //       const response = await fetch("http://localhost:8081/api/users/login", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({ email, password }),
+  //       });
 
-      const data = await response.json();
+  //       const data = await response.json();
 
-      if (response.ok) {
+  //       if (response.ok) {
+  //         localStorage.setItem("token", data.token);
+
+  //         // ✅ Update user context
+  //         if (data.user) {
+  //           setUser({
+  //             userName: data.user.userName,
+  //             email: data.user.email,
+  //           });
+  //         }
+
+  //         login(); // ✅ Mark user as authenticated
+  //         setSuccess(true);
+  //         setError("");
+
+  //         setTimeout(() => {
+  //           navigate("/"); // ✅ Redirect to homepage
+  //         }, 1500);
+  //       } else {
+  //         setError(data.message || "Invalid email or password.");
+  //       }
+  //     } catch (err) {
+  //       console.error("Login error:", err.message);
+  //       setError("Something went wrong. Please try again.");
+  //     }
+  //   };
+
+  //   return (
+  //     <div className={`user-login-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
+  //       <div className="user-login-card">
+  //         <h2 className="user-login-title">User Login</h2>
+
+  //         {error && <div className="user-login-error animate-fade-in">{error}</div>}
+  //         {success && (
+  //           <div className="user-login-success animate-fade-in">
+  //             Login successful! Redirecting...
+  //           </div>
+  //         )}
+
+  //         <form onSubmit={handleSubmit} className="user-login-form">
+  //           <div className="form-group animate-slide-in">
+  //             <label htmlFor="email" className="form-label">Email</label>
+  //             <input
+  //               type="email"
+  //               className="form-control"
+  //               id="email"
+  //               value={email}
+  //               onChange={(e) => setEmail(e.target.value)}
+  //               required
+  //             />
+  //           </div>
+
+  //           <div className="form-group animate-slide-in">
+  //             <label htmlFor="password" className="form-label">Password</label>
+  //             <input
+  //               type="password"
+  //               className="form-control"
+  //               id="password"
+  //               value={password}
+  //               onChange={(e) => setPassword(e.target.value)}
+  //               required
+  //             />
+  //           </div>
+
+  //           <button type="submit" className="user-login-button animate-fade-in">
+  //             Login
+  //           </button>
+  //         </form>
+
+  //         <p className="user-login-register-text animate-fade-in">
+  //           Don't have an account?{" "}
+  //           <a href="/user-register" className="register-link">
+  //             Register here
+  //           </a>
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // export default UserLogin;
+  import React, { useState, useContext } from "react";
+  import { useNavigate } from "react-router-dom";
+  import { useAuth } from "../../context/AuthContext";
+  import { UserContext } from "../../context/UserContext";
+  import "../css/UserLogin.css";
+  
+  function UserLogin({ theme }) {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+  
+    const { setUser } = useContext(UserContext);
+    const { login } = useAuth();
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setError("");
+  
+      try {
+        const response = await fetch("http://localhost:8081/api/users/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+  
+        const data = await response.json();
+  
+        if (!response.ok) throw new Error(data.message || "Login failed");
+  
+        // Store user data
         localStorage.setItem("token", data.token);
-
-        // ✅ Update user context
-        if (data.user) {
-          setUser({
-            userName: data.user.userName,
-            email: data.user.email,
-          });
-        }
-
-        login(); // ✅ Mark user as authenticated
-        setSuccess(true);
-        setError("");
-
-        setTimeout(() => {
-          navigate("/"); // ✅ Redirect to homepage
-        }, 1500);
-      } else {
-        setError(data.message || "Invalid email or password.");
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        // Update contexts
+        setUser({
+          _id: data.user._id,
+          userName: data.user.userName,
+          email: data.user.email,
+          role: data.user.role
+        });
+        
+        login();
+        navigate("/"); // Redirect to home
+  
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Login error:", err.message);
-      setError("Something went wrong. Please try again.");
-    }
-  };
-
-  return (
-    <div className={`user-login-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
-      <div className="user-login-card">
-        <h2 className="user-login-title">User Login</h2>
-
-        {error && <div className="user-login-error animate-fade-in">{error}</div>}
-        {success && (
-          <div className="user-login-success animate-fade-in">
-            Login successful! Redirecting...
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="user-login-form">
-          <div className="form-group animate-slide-in">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group animate-slide-in">
-            <label htmlFor="password" className="form-label">Password</label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button type="submit" className="user-login-button animate-fade-in">
-            Login
-          </button>
-        </form>
-
-        <p className="user-login-register-text animate-fade-in">
-          Don't have an account?{" "}
-          <a href="/user-register" className="register-link">
-            Register here
-          </a>
-        </p>
+    };
+  
+    return (
+      <div className={`user-login-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
+        <div className="user-login-card">
+          <h2>User Login</h2>
+          {error && <div className="error-message">{error}</div>}
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            
+            <button type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+          
+          <p className="register-link">
+            Don't have an account? <a href="/user-register">Register here</a>
+          </p>
+        </div>
       </div>
-    </div>
-  );
-}
-
-export default UserLogin;
+    );
+  }
+  
+  export default UserLogin;

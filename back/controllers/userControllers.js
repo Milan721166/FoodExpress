@@ -1,22 +1,22 @@
-const User = require("../models/user");
-const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
+import User from "../models/user.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 // Function to get all users
-const allUsers = async (req, res) => {
+export const allUsers = async (req, res) => {
     try {
         const users = await User.find();
-        res.json(users);
+        res.status(200).json(users);
     } catch (error) {
-        console.error("Error fetching users:", error.message);
-        res.status(500).json({ message: "Error fetching users" });
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: "Internal server error." });
     }
 };
 
 // Function to register a user
-const signupUser = async (req, res) => {
+export const signupUser = async (req, res) => {
     try {
         const { userName, email, mobNum, password, address, dob } = req.body;
 
@@ -53,7 +53,7 @@ const signupUser = async (req, res) => {
 };
 
 // Function to login a user
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -78,7 +78,18 @@ const loginUser = async (req, res) => {
             expiresIn: "1h",
         });
 
-        res.status(200).json({ token, message: "Login successful" });
+        res.status(200).json({ 
+            token, 
+            message: "Login successful", 
+            user: {
+                _id: user._id,
+                userName: user.userName,
+                email: user.email,
+                mobNum: user.mobNum,
+                address: user.address,
+                dob: user.dob
+            }
+        });
     } catch (error) {
         console.error("Error during login:", error.message);
         res.status(500).json({ message: "Server error. Please try again later.", error: error.message });
@@ -86,7 +97,7 @@ const loginUser = async (req, res) => {
 };
 
 // Function to get a single user by ID
-const singleUserById = async (req, res) => {
+export const singleUserById = async (req, res) => {
     try {
         const userId = req.params.id; // Get user ID from request parameters
 
@@ -109,7 +120,7 @@ const singleUserById = async (req, res) => {
 };
 
 // Function to update a user's profile
-const updateUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
     try {
         const { userName, email, mobNum, password, address, dob } = req.body;
 
@@ -120,7 +131,7 @@ const updateUserProfile = async (req, res) => {
         }
 
         // Update user fields
-        user.userName = userName || user.userName;
+        user.userName = user.userName || user.userName;
         user.email = email || user.email;
         user.mobNum = mobNum || user.mobNum;
         user.address = address || user.address;
@@ -138,5 +149,3 @@ const updateUserProfile = async (req, res) => {
         res.status(500).json({ message: "Error updating profile" });
     }
 };
-
-module.exports = { signupUser, loginUser, allUsers, singleUserById, updateUserProfile };

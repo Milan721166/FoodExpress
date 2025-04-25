@@ -1,11 +1,10 @@
-const express = require("express");
-const router = express.Router();
+import express from "express";
+import { createOrder, allOrders } from "../controllers/orderControllers.js";
 
-const { createOrder, allOrders } = require("../controllers/orderControllers");
+const router = express.Router();
 
 // ✅ Route must pass the function itself, not the result of calling it
 router.post("/create", createOrder);
-
 router.get("/allOrders", allOrders);
 
-module.exports = router;
+export default router;

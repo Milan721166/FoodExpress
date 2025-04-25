@@ -1,114 +1,171 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/NavBar.css';
-import dishes from '../../services/api.json';
-import { UserContext } from '../../context/UserContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faUser, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faShoppingCart, 
+  faUser, 
+  faMoon, 
+  faSun, 
+  faSignOutAlt, 
+  faUserCircle, 
+  faCog,
+  faUtensils,
+  faSearch
+} from '@fortawesome/free-solid-svg-icons';
+import { useUser } from '../../context/UserContext';
 
 function NavBar({ isDarkMode, toggleTheme, cart = [] }) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const { user, setUser } = useContext(UserContext);
+  const [dishes, setDishes] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { user, setUser } = useUser();
 
-  // Handle Admin Login click
+  // Safe user display name
+  const getUserDisplayName = () => {
+    if (!user) return 'Account';
+    if (user.username) return user.username;
+    if (user.email) return user.email.split('@')[0];
+    return 'User';
+  };
+
+  // Fetch dishes for search functionality
+  useEffect(() => {
+    const fetchDishes = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/api/dishes');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setDishes(data);
+      } catch (error) {
+        console.error("Error fetching dishes:", error);
+        // Fallback to mock data if API fails
+        setDishes([
+          { id: 1, name: "Mock Dish 1", price: 10.99, imageUrl: "mock1.jpg" },
+          { id: 2, name: "Mock Dish 2", price: 12.99, imageUrl: "mock2.jpg" },
+        ]);
+      }
+    };
+    fetchDishes();
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.dropdown')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDropdownOpen]);
+
+  // Navigation handlers
   const handleAdminLoginClick = () => {
     navigate('/admin-login');
+    setIsDropdownOpen(false);
   };
 
-  // Handle Cart Icon click
   const handleCartClick = () => {
     navigate('/cart');
+    setIsDropdownOpen(false);
   };
 
-  // Handle User Login click
   const handleUserLoginClick = () => {
     navigate('/user-login');
+    setIsDropdownOpen(false);
   };
 
-  // Handle User Registration click
   const handleUserRegisterClick = () => {
     navigate('/user-register');
+    setIsDropdownOpen(false);
   };
 
-  // Handle Restaurant Login click
   const handleRestaurantLoginClick = () => {
     navigate('/restaurant-login');
+    setIsDropdownOpen(false);
   };
 
-  // Handle Profile Click
-  const handleProfileClick = async () => {
-    if (user && user.id) {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error("Token is missing. Redirecting to login.");
-        navigate('/user-login');
-        return;
-      }
+  const handleHomeClick = () => {
+    navigate('/');
+    setIsDropdownOpen(false);
+  };
 
-      try {
-        const response = await fetch(`http://localhost:8080/api/users/profile/id/${user.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  const handleMenuClick = () => {
+    navigate('/menu');
+    setIsDropdownOpen(false);
+  };
 
-        if (response.ok) {
-          navigate(`/profile/username/${user.userName}`);
-        } else if (response.status === 401) {
-          console.error("Unauthorized. Redirecting to login.");
-          navigate('/user-login');
-        } else {
-          console.error("Failed to fetch profile data.");
-        }
-      } catch (err) {
-        console.error("Error fetching profile data:", err);
-        navigate('/user-login');
-      }
+  const handleContactClick = () => {
+    navigate('/contact-us');
+    setIsDropdownOpen(false);
+  };
+
+  // Admin dashboard handler
+  const handleAdminDashboard = () => {
+    if (user?.role === 'admin') {
+      navigate('/admin-dashboard');
     } else {
-      console.error("User ID is undefined. Redirecting to login.");
-      navigate('/user-login');
+      navigate('/admin-login');
     }
+    setIsDropdownOpen(false);
   };
 
-  // Handle Logout
+  // Restaurant dashboard handler
+  const handleRestaurantDashboard = () => {
+    if (user?.role === 'restaurant') {
+      navigate('/restaurant-dashboard');
+    } else {
+      navigate('/restaurant-login');
+    }
+    setIsDropdownOpen(false);
+  };
+
+  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
     navigate('/');
+    setIsDropdownOpen(false);
   };
 
-  // Handle Search Input Change
+  // Search functionality
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-
-    if (query.trim() === '') {
-      setSearchResults([]);
-    } else {
-      const filteredDishes = dishes.filter((dish) =>
-        dish.name.toLowerCase().includes(query.toLowerCase())
-      );
-      setSearchResults(filteredDishes);
-    }
+    setSearchResults(
+      query.trim() === '' 
+        ? [] 
+        : dishes.filter(dish => 
+            dish.name.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, 5) // Limit to 5 results
+    );
   };
 
-  // Handle Search Form Submission
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchResults.length > 0) {
+    if (searchQuery.trim() && searchResults.length > 0) {
       navigate(`/dish/${searchResults[0].id}`);
+      setSearchQuery('');
+      setSearchResults([]);
     }
   };
 
+  // Toggle dropdown
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
   return (
-    <nav className={`navbar navbar-expand-lg navbar-light ${isDarkMode ? 'dark' : 'bg-light'} fixed-top`}>
+    <nav className={`navbar navbar-expand-lg ${isDarkMode ? 'navbar-dark bg-dark' : 'navbar-light bg-light'} fixed-top`}>
       <div className="container-fluid">
         {/* Brand Logo */}
-        <a className="navbar-brand" href="/">
+        <div className="navbar-brand" onClick={handleHomeClick} style={{ cursor: 'pointer' }}>
           <img
             src="https://www.logodesign.net/logo/smoking-burger-with-lettuce-3624ld.png"
             alt="FoodieExpress Logo"
@@ -116,155 +173,180 @@ function NavBar({ isDarkMode, toggleTheme, cart = [] }) {
             width="30"
             height="30"
           />
-          FoodieExpress
-        </a>
+          <span className="brand-text">FoodieExpress</span>
+        </div>
 
-        {/* Hamburger Menu */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
+        {/* Mobile Toggle Button */}
+        <button 
+          className="navbar-toggler" 
+          type="button" 
+          onClick={toggleDropdown}
+          aria-expanded={isDropdownOpen}
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Navbar Content */}
-        <div className="collapse navbar-collapse" id="navbarNav">
-          {/* Main Navigation Links */}
+        {/* Main Navigation */}
+        <div className={`collapse navbar-collapse ${isDropdownOpen ? 'show' : ''}`} id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="/">
-                Home
-              </a>
+              <button className="nav-link btn btn-link" onClick={handleHomeClick}>Home</button>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/menu">
-                Menu
-              </a>
+              <button className="nav-link btn btn-link" onClick={handleMenuClick}>Menu</button>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/contact-us">
-                Contact Us
-              </a>
+              <button className="nav-link btn btn-link" onClick={handleContactClick}>Contact Us</button>
             </li>
           </ul>
 
-          {/* Search Bar with Results */}
-          <form className="d-flex search-container" onSubmit={handleSearchSubmit}>
-            <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Search food..."
-              aria-label="Search"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            <button className="btn btn-outline-success" type="submit">
-              Search
-            </button>
+          {/* Search Bar */}
+          <div className="search-container me-3 position-relative">
+            <form className="d-flex" onSubmit={handleSearchSubmit}>
+              <div className="input-group">
+                <input
+                  className="form-control"
+                  type="search"
+                  placeholder="Search dishes..."
+                  aria-label="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <button className="btn btn-outline-success" type="submit">
+                  <FontAwesomeIcon icon={faSearch} />
+                </button>
+              </div>
+            </form>
             {searchResults.length > 0 && (
-              <div className="search-results-dropdown">
+              <div className="search-results-dropdown position-absolute bg-white rounded shadow mt-1 w-100">
                 {searchResults.map((dish) => (
-                  <div
-                    key={dish.id}
-                    className="search-result-item"
-                    onClick={() => navigate(`/dish/${dish.id}`)}
+                  <div 
+                    key={dish.id} 
+                    className="search-result-item p-2 d-flex align-items-center"
+                    onClick={() => {
+                      navigate(`/dish/${dish.id}`);
+                      setSearchQuery('');
+                      setSearchResults([]);
+                    }}
                   >
-                    <img src={dish.imageUrl} alt={dish.name} className="search-result-image" />
+                    <img 
+                      src={dish.imageUrl || 'https://via.placeholder.com/50'} 
+                      alt={dish.name} 
+                      className="search-result-img me-2 rounded"
+                      width="40"
+                      height="40"
+                    />
                     <div className="search-result-details">
-                      <h5>{dish.name}</h5>
-                      <p>${dish.price.toFixed(2)}</p>
+                      <h6 className="mb-0">{dish.name}</h6>
+                      <p className="mb-0 text-muted">${dish.price.toFixed(2)}</p>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </form>
+          </div>
 
           {/* Cart Icon */}
           <div className="nav-item me-3">
-            <a
-              className="nav-link"
-              href="#"
-              onClick={handleCartClick}
-              aria-label="Cart"
-            >
-              <FontAwesomeIcon icon={faShoppingCart} />
-              <span className="badge bg-danger ms-1">{cart.length}</span>
-            </a>
+            <button className="btn btn-link position-relative" onClick={handleCartClick}>
+              <FontAwesomeIcon icon={faShoppingCart} size="lg" />
+              {cart.length > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {cart.length}
+                </span>
+              )}
+            </button>
           </div>
 
-          {/* Theme Toggle Button */}
+          {/* Theme Toggle */}
           <div className="nav-item me-3">
-            <button
-              className="btn theme-toggle-button"
+            <button 
+              className={`btn ${isDarkMode ? 'btn-light' : 'btn-dark'}`}
               onClick={toggleTheme}
-              aria-label="Toggle Theme"
+              aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
-              <span className="ms-2">{isDarkMode ? 'Light' : 'Dark'}</span>
             </button>
           </div>
 
           {/* User Dropdown */}
           <div className="nav-item dropdown">
-            <a
-              className="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdown"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
+            <button
+              className="btn btn-link dropdown-toggle d-flex align-items-center"
+              id="userDropdown"
+              onClick={toggleDropdown}
+              aria-expanded={isDropdownOpen}
             >
-              <FontAwesomeIcon icon={faUser} />
-              {user && <span className="ms-2">Hi, {user.userName}</span>}
-            </a>
-            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <FontAwesomeIcon icon={faUser} className="me-2" />
+              <span>{getUserDisplayName()}</span>
+            </button>
+            <ul className={`dropdown-menu dropdown-menu-end ${isDropdownOpen ? 'show' : ''}`} aria-labelledby="userDropdown">
               {user ? (
-                user.isAdmin ? (
+                <>
+                  <li className="dropdown-header px-3 py-2">
+                    <div className="d-flex align-items-center">
+                      <FontAwesomeIcon 
+                        icon={user.role === 'admin' ? faCog : (user.role === 'restaurant' ? faUtensils : faUserCircle)} 
+                        className="me-2" 
+                        size="lg" 
+                      />
+                      <div>
+                        <h6 className="mb-0">{user.username || user.email}</h6>
+                        <small className="text-muted">
+                          {user.role === 'admin' ? 'Admin' : (user.role === 'restaurant' ? 'Restaurant' : 'User')}
+                        </small>
+                      </div>
+                    </div>
+                  </li>
+                  <li><hr className="dropdown-divider" /></li>
+                  {user.role === 'admin' && (
+                    <li>
+                      <button className="dropdown-item" onClick={handleAdminDashboard}>
+                        <FontAwesomeIcon icon={faCog} className="me-2" />
+                        Admin Dashboard
+                      </button>
+                    </li>
+                  )}
+                  {user.role === 'restaurant' && (
+                    <li>
+                      <button className="dropdown-item" onClick={handleRestaurantDashboard}>
+                        <FontAwesomeIcon icon={faUtensils} className="me-2" />
+                        Restaurant Dashboard
+                      </button>
+                    </li>
+                  )}
                   <li>
-                    <button className="dropdown-item" onClick={handleLogout}>
+                    <button className="dropdown-item text-danger" onClick={handleLogout}>
+                      <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
                       Logout
                     </button>
                   </li>
-                ) : (
-                  <>
-                    <li>
-                      <button className="dropdown-item" onClick={handleProfileClick}>
-                        Profile
-                      </button>
-                    </li>
-                    <li>
-                      <button className="dropdown-item" onClick={handleLogout}>
-                        Logout
-                      </button>
-                    </li>
-                  </>
-                )
+                </>
               ) : (
                 <>
                   <li>
                     <button className="dropdown-item" onClick={handleUserLoginClick}>
+                      <FontAwesomeIcon icon={faUser} className="me-2" />
                       User Login
                     </button>
                   </li>
                   <li>
                     <button className="dropdown-item" onClick={handleUserRegisterClick}>
-                      User Registration
-                    </button>
-                  </li>
-                  <li>
-                    <button className="dropdown-item" onClick={handleAdminLoginClick}>
-                      Admin Login
+                      <FontAwesomeIcon icon={faUser} className="me-2" />
+                      Register
                     </button>
                   </li>
                   <li>
                     <button className="dropdown-item" onClick={handleRestaurantLoginClick}>
+                      <FontAwesomeIcon icon={faUtensils} className="me-2" />
                       Restaurant Login
+                    </button>
+                  </li>
+                  <li>
+                    <button className="dropdown-item" onClick={handleAdminLoginClick}>
+                      <FontAwesomeIcon icon={faCog} className="me-2" />
+                      Admin Login
                     </button>
                   </li>
                 </>

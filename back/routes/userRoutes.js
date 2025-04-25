@@ -1,14 +1,13 @@
+import express from 'express';
+import {
+  signupUser,
+  loginUser,
+  allUsers,
+  singleUserById,
+  updateUserProfile
+} from '../controllers/userControllers.js'; // Corrected import
 
-const express = require('express');
-const {
-    signupUser,
-    loginUser,
-    allUsers,
-    singleUserById,
-    updateUserProfile
-} = require('../controllers/userControllers'); // Corrected import
-
-const protect = require('../middleware/auth'); // Import the authentication middleware
+import { protect } from '../middleware/authMiddleware.js'; // Import the authentication middleware
 
 const router = express.Router();
 
@@ -19,7 +18,7 @@ router.post('/signup', signupUser);
 router.post('/login', loginUser);
 
 // Route to get all users (protected route)
-router.get('/allUser', allUsers);
+router.get('/allUser', protect, allUsers);
 
 // Route to get a single user by ID (protected route)
 router.get('/singleuser/:id', protect, singleUserById);
@@ -27,4 +26,4 @@ router.get('/singleuser/:id', protect, singleUserById);
 // Route to update a user's profile (protected route)
 router.put('/updateuser', protect, updateUserProfile);
 
-module.exports = router;
+export default router;

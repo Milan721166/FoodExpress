@@ -1,53 +1,74 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
-import "../css/AdminLogin.css";
+// src/components/AdminLogin.js
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
+import '../css/AdminLogin.css';
 
 function AdminLogin({ theme }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/admin-dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
 
     if (!username || !password) {
-      alert("Please fill in all fields.");
+      setError('Please fill in all fields.');
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/admin/login", {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        'http://localhost:8081/api/admin/login',
+        { username, password },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
 
-      // if (response.status === 200) {
-      //   // const { token } = response.data;
-      //   //console.log("Token received:", token); // Debugging
-      //   //localStorage.setItem("adminToken", token);
-      //   //login();
-      //   alert("Login successful!");
-      //   navigate("/admin-dashboard");
-      // }
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message || "Login failed. Please check your credentials.");
-      } else if (error.request) {
-        alert("No response from the server. Please try again later.");
+      if (response.data?.token && response.data?.user) {
+        await login(response.data.user, response.data.token);
       } else {
-        alert("An error occurred. Please try again.");
+        throw new Error('Invalid response from server');
       }
-      console.error("Login error:", error);
+    } catch (error) {
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.response) {
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error.request) {
+        errorMessage = 'No response from server. Please try again later.';
+      }
+      
+      setError(errorMessage);
+      console.error('Login error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className={`admin-login-container ${theme === "dark" ? "dark-theme" : "light-theme"}`}>
+    <div className={`admin-login-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
       <div className="admin-login-box">
         <h1 className="admin-login-title">Admin Login</h1>
+        {error && <div className="error-message">{error}</div>}
         <form className="admin-login-form" onSubmit={handleSubmit}>
           <div className="form-group animate-slide-in">
             <label htmlFor="username">Username</label>
@@ -59,6 +80,7 @@ function AdminLogin({ theme }) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
+              autoFocus
             />
           </div>
           <div className="form-group animate-slide-in">
@@ -73,8 +95,17 @@ function AdminLogin({ theme }) {
               required
             />
           </div>
-          <button type="submit" className="admin-login-button animate-fade-in">
-            Login
+          <button 
+            type="submit" 
+            className="admin-login-button animate-fade-in"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                Logging in...
+              </>
+            ) : 'Login'}
           </button>
         </form>
         <p className="admin-login-footer animate-fade-in">

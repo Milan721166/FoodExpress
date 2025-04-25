@@ -1047,7 +1047,7 @@ function AdminDashboard({ theme, toggleTheme }) {
           <button
             onClick={() => {
               localStorage.removeItem('adminToken');
-              navigate('/admin-login');
+              navigate('/');
             }}
             className="logout-btn"
           >

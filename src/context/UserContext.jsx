@@ -1,24 +1,48 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useContext } from 'react';
 
+// Create and export the context
 export const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+// User provider component
+export function UserProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser && storedUser !== 'undefined' 
+        ? JSON.parse(storedUser) 
+        : null;
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+      return null;
+    }
   });
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
+  // Update both state and localStorage
+  const updateUser = (userData) => {
+    try {
+      if (userData) {
+        localStorage.setItem('user', JSON.stringify(userData));
+      } else {
+        localStorage.removeItem('user');
+      }
+      setUser(userData);
+    } catch (error) {
+      console.error("Error updating user data:", error);
     }
-  }, [user]);
+  };
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser: updateUser }}>
       {children}
     </UserContext.Provider>
   );
+}
+
+// Custom hook for accessing user context
+export function useUser() {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
 }

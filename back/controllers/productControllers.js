@@ -1,11 +1,11 @@
-const Product = require("../models/product");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+import Product from "../models/product.js";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 //get all the products
-const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res) => {
     try {
         const products = await Product.find();
         res.status(200).json(products);
@@ -16,7 +16,7 @@ const getAllProducts = async (req, res) => {
 };
 
 //get single product by id
-const getSingleProduct = async (req, res) => {
+export const getSingleProduct = async (req, res) => {
     try {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -35,13 +35,13 @@ const getSingleProduct = async (req, res) => {
 };
 
 //create a new product 
-const createProduct = async (req, res) => {
+export const createProduct = async (req, res) => {
     try {
         const { name, imageUrl, price, description } = req.body;
 
         // Validate required fields
         if (!name || !imageUrl || !price || !description) {
-            return res.status(400).json({ message: "Please fill all the fields" });
+            return res.status(400).json({ message: "Please fill all the fields." });
         }
 
         // Create a new product
@@ -55,67 +55,57 @@ const createProduct = async (req, res) => {
         const savedProduct = await newProduct.save();
         res.status(201).json(savedProduct);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Error creating product:", error);
+        res.status(500).json({ message: "Internal server error." });
     }
 };
 
 //update a product
-
-const updateProductById = async (req, res) => {
+export const updateProductById = async (req, res) => {
     try {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res
-                .status(400)
-                .json({ message: "Inavlid Product id" });
+            return res.status(400).json({ message: "Invalid Product id" });
         }
 
         const updateProduct = await Product.findByIdAndUpdate(id, req.body, { new: true });
         if (!updateProduct) {
-            return res
-                .status(404)
-                .json({ message: "Product Not Found" });
+            return res.status(404).json({ message: "Product Not Found" });
         }
         res.json(updateProduct);
     } catch (error) {
-        cosole.log("Error to update product", error);
-        res
-            .status(500)
-            .json({ message: "Server Error" });
+        console.log("Error updating product:", error);
+        res.status(500).json({ message: "Server Error" });
     }
 };
 
 //delete product by id 
-const deleteProductById = async (req, res) => {
+export const deleteProductById = async (req, res) => {
     try {
         const { id } = req.params;
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res
-                .status(400)
-                .json({ message: "Invalid Product id" });
-        }
-        const deleteProduct = await Product.findByIdAndDelete(id);
-        if (!deleteProduct) {
-            return res
-                .status(404)
-                .json({ message: "Product Not Found" });
+
+        // Validate product ID
+        if (!id) {
+            return res.status(400).json({ message: 'Product ID is required.' });
         }
 
-        res
-            .json({
-                message: "Product Deleted Successfully"
-            });
+        // Delete the product
+        const deletedProduct = await Product.findByIdAndDelete(id);
+
+        if (!deletedProduct) {
+            return res.status(404).json({ message: 'Product not found.' });
+        }
+
+        res.status(200).json({ message: 'Product deleted successfully.' });
     } catch (error) {
-        console.log("Error to delete product", error);
-        res
-            .status(500)
-            .json({ message: "Server Error" });
+        console.error('Error deleting product:', error);
+        res.status(500).json({ message: 'Internal server error.' });
     }
-}
+};
 
 // Export the function
 
-module.exports = {
+export default {
     getAllProducts,
     getSingleProduct,
     createProduct,

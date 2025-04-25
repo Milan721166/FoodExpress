@@ -1,49 +1,43 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require("dotenv");
-const Resturant = require("../models/resturant.js");
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import Resturant from '../models/resturant.js';
 
+dotenv.config();
 
-const getAllResturant = async (req, res) => {
-    try {
-        const resturant = await Resturant.find();
-        res
-            .status(200)
-            .json(resturant);
-    } catch (err) {
-        console.log('Error to fetching resturant data', err);
-        res
-            .status(500)
-            .json({ message: 'An internal server error to fetching the resturant data' });
-    }
+export const getAllResturant = async (req, res) => {
+  try {
+    const resturants = await Resturant.find();
+    res.status(200).json(resturants);
+  } catch (error) {
+    console.error('Error fetching restaurants:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
 };
 
-//create a new resturant 
+export const createNewResturant = async (req, res) => {
+  try {
+    const { name, location, image, resturantType, email, mobileNum } = req.body;
 
-const createNewResturant = async (req, res) => {
-    try {
-        const {
-            name,
-            location,
-            image,
-            resturantType,
-            email,
-            mobileNum,
-        } = req.body;
-        const resturant = new Resturant({ name, location, image, resturantType, email, mobileNum, password });
-        await resturant.save();
-        res
-            .status(201)
-            .json(resturant);
-    } catch (err) {
-        console.error('Error adding resturant', err);
-        res
-            .status(500)
-            .json({ message: 'An internal server error to insert the resturant' });
+    // Validate required fields
+    if (!name || !location || !image || !resturantType || !email || !mobileNum) {
+      return res.status(400).json({ message: 'All fields are required.' });
     }
-};
 
-module.exports = {
-    getAllResturant,
-    createNewResturant
-}
+    // Create a new restaurant
+    const resturant = new Resturant({
+      name,
+      location,
+      image,
+      resturantType,
+      email,
+      mobileNum,
+    });
+
+    const savedResturant = await resturant.save();
+    res.status(201).json(savedResturant);
+  } catch (error) {
+    console.error('Error adding restaurant:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+};
