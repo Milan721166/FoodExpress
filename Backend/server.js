@@ -120,7 +120,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database connection
 connectDB();
-
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 // API Routes
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
