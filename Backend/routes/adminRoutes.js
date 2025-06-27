@@ -13,9 +13,8 @@ import {
 import {
   protectAdmin,
   protectAdminOrRestaurant,
-  deleteUserByAdmin,
 } from "../middleware/authMiddleware.js";
-import { allUsers } from "../controllers/userControllers.js";
+import { allUsers, deleteUserByAdmin } from "../controllers/userControllers.js";
 
 const router = express.Router();
 
