@@ -87,7 +87,7 @@ export const resturantLogin = async (req, res) => {
     );
     res.status(200).json({
       token,
-      resturant: { id: resturant._id, username: resturant.username },
+      resturant: { _id: resturant._id, username: resturant.username },
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error." });
