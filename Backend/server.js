@@ -114,16 +114,25 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection
 connectDB();
+
+// Allow both local and deployed frontend
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://your-frontend-domain.onrender.com", // <-- add your deployed frontend if needed
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 // API Routes
