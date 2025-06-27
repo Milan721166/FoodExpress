@@ -81,3 +81,24 @@ export const deleteReview = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
+import Review from "../models/review.js";
+import Product from "../models/product.js";
+
+export const getReviewsByRestaurant = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    // Find all products for this restaurant
+    const products = await Product.find({ restaurant: restaurantId }).select(
+      "_id"
+    );
+    const productIds = products.map((p) => p._id);
+    // Find all reviews for these products
+    const reviews = await Review.find({ product: { $in: productIds } })
+      .populate("user", "userName")
+      .populate("product", "name imageUrl");
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error." });
+  }
+};

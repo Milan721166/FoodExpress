@@ -88,3 +88,16 @@ export const deleteOrder = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
+// Add this function
+export const getOrdersByRestaurant = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    const orders = await Order.find({ restaurant: restaurantId })
+      .populate("user", "userName email mobNum address")
+      .populate("products.product", "name price imageUrl");
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
