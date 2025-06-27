@@ -125,7 +125,7 @@ connectDB();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://your-frontend-domain.onrender.com",
-  "https://food-express-8qpd.vercel.app/", // <-- add your deployed frontend if needed
+  "https://food-express-8qpd.vercel.app/" // <-- add your deployed frontend if needed
 ];
 
 app.use(
