@@ -13,6 +13,7 @@ import {
 import {
   protectAdmin,
   protectAdminOrRestaurant,
+  deleteUserByAdmin,
 } from "../middleware/authMiddleware.js";
 import { allUsers } from "../controllers/userControllers.js";
 
@@ -32,5 +33,6 @@ router.put("/restaurants/:id", protectAdmin, updateResturant); // Update restaur
 router.delete("/restaurants/:id", protectAdmin, deleteResturant); // Delete restaurant
 
 // Get all users (admin or restaurant only)
+router.delete("/user/:id", protectAdmin, deleteUserByAdmin); // Add this line
 router.get("/allUser", protectAdminOrRestaurant, allUsers);
 export default router;
