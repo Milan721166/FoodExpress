@@ -1,1 +1,1 @@
-export const BASE_URL = "http://localhost:5000/api";
+export const BACKEND_URL = `https://updatedfooddelivery-1.onrender.com/api`;
