@@ -4,10 +4,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-//get all the products
+// Get all the products (populate restaurant)
 export const getAllProducts = async (req, res) => {
   try {
-    // Optionally populate restaurant for all products
     const products = await Product.find().populate("restaurant");
     res.status(200).json(products);
   } catch (error) {
@@ -16,16 +15,14 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-//get single product by id
+// Get single product by id (populate restaurant)
 export const getSingleProduct = async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Product id" });
     }
-    // FIX: populate restaurant field
     const product = await Product.findById(id).populate("restaurant");
-
     if (!product) {
       return res.status(404).json({ message: "Product Not Found" });
     }
@@ -36,11 +33,13 @@ export const getSingleProduct = async (req, res) => {
   }
 };
 
-// Get all products for a specific restaurant
+// Get all products for a specific restaurant (populate restaurant)
 export const getProductsByRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;
-    const products = await Product.find({ restaurant: restaurantId });
+    const products = await Product.find({ restaurant: restaurantId }).populate(
+      "restaurant"
+    );
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: "Internal server error." });
@@ -117,6 +116,7 @@ export const deleteProductById = async (req, res) => {
 export default {
   getAllProducts,
   getSingleProduct,
+  getProductsByRestaurant,
   createProduct,
   updateProductById,
   deleteProductById,

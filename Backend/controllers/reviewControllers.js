@@ -82,7 +82,6 @@ export const deleteReview = async (req, res) => {
   }
 };
 
-import Review from "../models/review.js";
 import Product from "../models/product.js";
 
 export const getReviewsByRestaurant = async (req, res) => {

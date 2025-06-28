@@ -35,7 +35,23 @@ export const signupAdmin = async (req, res) => {
 
     await admin.save();
 
-    res.status(201).json({ message: "Admin registered successfully." });
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: admin._id, username: admin.username, role: "admin" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    // Return token and admin info
+    res.status(201).json({
+      message: "Admin registered successfully.",
+      token,
+      user: {
+        id: admin._id,
+        username: admin.username,
+        role: "admin",
+      },
+    });
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({ message: "An internal server error occurred." });
