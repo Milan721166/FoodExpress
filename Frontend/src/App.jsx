@@ -4,8 +4,6 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Button, NavDropdown, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { 
-  FaSun, 
-  FaMoon, 
   FaShoppingCart, 
   FaUser, 
   FaSearch, 
@@ -30,10 +28,8 @@ import { CartProvider, useCart } from "./context/CartContext";
 import Footer from "./pages/Footer";
 
 function App() {
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem('darkMode');
-    return savedMode ? JSON.parse(savedMode) : window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+  // Remove dark mode state and always set to true
+  const darkMode = true;
 
   const [auth, setAuth] = useState(() => {
     const savedAuth = localStorage.getItem('auth');
@@ -47,13 +43,9 @@ function App() {
   });
 
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
+    // Always set dark mode
+    document.body.classList.add('dark-mode');
+  }, []);
 
   const login = (userData, role, restaurantData = null) => {
     const newAuth = {
@@ -83,10 +75,8 @@ function App() {
   return (
     <CartProvider>
       <Router>
-        <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
+        <div className={`app-container dark-mode`}>
           <Navbar 
-            darkMode={darkMode} 
-            setDarkMode={setDarkMode} 
             auth={auth}
             login={login}
             logout={logout}
@@ -115,7 +105,7 @@ function App() {
   );
 }
 
-function Navbar({ darkMode, setDarkMode, auth, logout }) {
+function Navbar({ auth, logout }) {
   const [expanded, setExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { cartCount } = useCart();
@@ -134,7 +124,7 @@ function Navbar({ darkMode, setDarkMode, auth, logout }) {
   };
 
   return (
-    <nav className={`navbar navbar-expand-lg ${darkMode ? 'navbar-dark bg-dark' : 'navbar-light bg-light'}`}>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <Link to="/" className="navbar-brand d-flex align-items-center">
           <span className="logo-text">FoodExpress</span>
@@ -183,15 +173,6 @@ function Navbar({ darkMode, setDarkMode, auth, logout }) {
           </Form>
 
           <div className="d-flex align-items-center">
-            <Button 
-              variant="outline-secondary" 
-              className="me-2" 
-              onClick={() => setDarkMode(!darkMode)}
-              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-              {darkMode ? <FaSun /> : <FaMoon />}
-            </Button>
-
             {auth.isAuthenticated ? (
               <>
                 <Button variant="outline-secondary" className="me-2 position-relative">
